@@ -174,10 +174,11 @@ function ProductCard({ product }) {
         </button>
       </div>
       {/* Product image */}
-      <div className="flex items-center mt-[40px] justify-center h-40 w-full bg-gray-50 rounded-t-2xl">
+      <div className="flex items-center  justify-center h-60 w-full  bg-gray-50  rounded-t-2xl">
         <img
           src={product.image}
           alt={product.title}
+          loading="lazy"
           className="h-32 w-32 object-contain mb-2 
              transition-transform duration-300 ease-in-out 
              hover:scale-110 hover:rotate-1"
