@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import { Analytics } from "@vercel/analytics/react";
+
 
 import React, { Suspense } from "react";
 
@@ -127,7 +127,6 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <AppRoutes />
-          <Analytics />
         </BrowserRouter>
       </AuthProvider>
     </ErrorBoundary>
