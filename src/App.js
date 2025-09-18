@@ -1,12 +1,12 @@
 import "./App.css";
+import ErrorBoundary from "./ErrorBoundary";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Products from "./pages/Products";
-import Profile from "./pages/Profile";
-import React from "react";
-import { ToastContainer } from "react-toastify";
+
+import React, { Suspense } from "react";
+
 import "react-toastify/dist/ReactToastify.css";
 
 function Loader() {
@@ -42,7 +42,7 @@ function Loader() {
 }
 
 function AppRoutes() {
-  const { user } = useAuth();
+  const { user, initializing } = useAuth();
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -51,7 +51,15 @@ function AppRoutes() {
     return () => clearTimeout(timeout);
   }, [user]);
 
-  if (user === null && loading) return <Loader />;
+  if (loading) return <Loader />;
+
+  const ProductsComponent = React.lazy(() =>
+    import(/* webpackChunkName: "ProductsComponentChunk" */ "./pages/Products")
+  );
+
+  const ProfileComponent = React.lazy(() =>
+    import(/* webpackChunkName: "ProfileComponentChunk" */ "./pages/Profile")
+  );
 
   return (
     <Routes>
@@ -63,14 +71,47 @@ function AppRoutes() {
         path="/signup"
         element={!user ? <Signup /> : <Navigate to="/products" />}
       />
+
+      {/* <Route
+        path="/products"
+        element={
+          user ? (
+            <Suspense fallback={<Loader />}>
+              <ProductsComponent />
+            </Suspense>
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      /> */}
       <Route
         path="/products"
-        element={user ? <Products /> : <Navigate to="/login" />}
+        element={
+          initializing ? (
+            <Loader /> // ⏳ wait until auth state is known
+          ) : user ? (
+            <Suspense fallback={<Loader />}>
+              <ProductsComponent />
+            </Suspense>
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
       />
+
       <Route
         path="/profile"
-        element={user ? <Profile /> : <Navigate to="/login" />}
+        element={
+          user ? (
+            <Suspense fallback={<Loader />}>
+              <ProfileComponent />
+            </Suspense>
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
       />
+
       <Route
         path="*"
         element={<Navigate to={user ? "/products" : "/login"} />}
@@ -81,11 +122,13 @@ function AppRoutes() {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

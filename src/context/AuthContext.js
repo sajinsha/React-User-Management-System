@@ -5,13 +5,15 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(undefined); 
+  const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser); // firebaseUser = user object OR null
+      setInitializing(false); // ✅ we're done checking
+      if (firebaseUser) {
+        localStorage.setItem("user", JSON.stringify(firebaseUser));
       } else {
         localStorage.removeItem("user");
       }
@@ -22,7 +24,7 @@ export function AuthProvider({ children }) {
   const logout = () => signOut(auth);
 
   return (
-    <AuthContext.Provider value={{ user, logout }}>
+    <AuthContext.Provider value={{ user, initializing, logout }}>
       {children}
     </AuthContext.Provider>
   );
