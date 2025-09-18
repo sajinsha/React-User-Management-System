@@ -54,7 +54,6 @@ function Profile() {
   if (!profile)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        Loading...
         <ToastContainer />
       </div>
     );
@@ -65,7 +64,12 @@ function Profile() {
       <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-lg flex flex-col items-center">
         <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-indigo-400 to-purple-400 flex items-center justify-center mb-6 shadow-lg">
           <img
-            src={user?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name)}&background=6D28D9&color=fff&size=128`}
+            src={
+              user?.photoURL ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                profile.name
+              )}&background=6D28D9&color=fff&size=128`
+            }
             alt="Profile"
             className="w-24 h-24 rounded-full object-cover border-4 border-white shadow"
           />
@@ -78,13 +82,17 @@ function Profile() {
         </p>
         <div className="w-full flex flex-col gap-4 mb-6">
           <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 shadow">
-            <span className="font-medium text-gray-600 text-[14px]">Mobile</span>
+            <span className="font-medium text-gray-600 text-[14px]">
+              Mobile
+            </span>
             <span className="font-semibold text-gray-800 text-[14px]">
               {profile.mobile}
             </span>
           </div>
           <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 shadow">
-            <span className="font-medium text-gray-600 text-[14px]">Date of Birth</span>
+            <span className="font-medium text-gray-600 text-[14px]">
+              Date of Birth
+            </span>
             <span className="font-semibold text-gray-800 text-[14px]">
               {profile.dob}
             </span>
